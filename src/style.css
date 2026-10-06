@@ -1,0 +1,64 @@
+header {
+  background-color: #383c3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+nav {
+  background-color: #4b7883;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
+
+nav ul {
+  list-style: none; /* Saca los puntos de la lista */
+  padding: 0;       /* Saca la sangría por defecto */
+}
+
+nav li {
+  margin-bottom: 10px; /* Separa los ítems entre sí */
+}
+
+nav a {
+  color: white;             /* Letra blanca para contrastar con el fondo azul */
+  text-decoration: none;    /* Saca el subrayado */
+  display: block;           /* Hace que toda la cajita sea clickeable */
+  padding: 8px 20px;
+  width: 100%;
+}
+
+nav a:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Efecto al pasar el mouse por encima */
+}
+
+main {
+  flex: 1;
+  padding: 20px; /* Para que el contenido no quede pegado a los bordes */
+  background-color: #8c949b; /* Un gris muy suave para distinguirlo del fondo blanco */
+  position: relative; /* para que las demas se puedan poner en posición fija */
+}
+
+.whatsapp-boton {
+  position: absolute;
+  bottom: 20px;
+}
+
+.facebook-boton {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.layout-cuerpo {
+  display: flex;
+  flex: 1; /* Le indica que se estire hasta cubrir todo el espacio restante hasta el fondo */
+}
