@@ -231,7 +231,7 @@ function cargarMenuEmpleado() {
   nav.innerHTML = `
     <li><a href="#" id="link-emp-incidencias">Mis Incidencias</a></li>
     <li><a href="#" id="link-emp-articulos">Artículos</a></li>
-    <li><a href="#" id="link-emp-salir" class="text-danger">← Volver / Salir</a></li>
+    <li><a href="#" id="link-emp-salir">← Volver / Salir</a></li>
   `;
 
   // Carga directamente la vista de incidencias como inicio del empleado
