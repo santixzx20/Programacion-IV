@@ -26,10 +26,13 @@
           <h2 class="h3 mb-0" style="color: #031926;">Gestión de Categorías</h2>
           <p class="text-muted small mb-0">Clasificación de artículos del municipio</p>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCat">
+        <button class="btn btn-primary" id="btn-nueva-cat">
           + Nueva Categoría
         </button>
       </div>
+
+      <!-- Mensajes de éxito o error -->
+      <div id="alerta-cat"></div>
 
       <div class="card shadow-sm border-0">
         <div class="table-responsive">
@@ -46,26 +49,45 @@
         </div>
       </div>
 
-      <!-- MODAL NUEVA CATEGORÍA -->
+      <!-- MODAL AGREGAR / EDITAR CATEGORÍA -->
       <div class="modal fade" id="modalCat" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Agregar Categoría</h5>
+              <h5 class="modal-title" id="titulo-modal-cat">Agregar Categoría</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="form-cat">
               <div class="modal-body">
+                <!-- Vacío al agregar; con el id de la categoría al editar -->
+                <input type="hidden" id="cat-id" />
                 <div class="mb-3">
-                  <label class="form-label">Descripción</label>
-                  <input type="text" id="cat-nombre" class="form-control" placeholder="Ej: Redes e Insumos" required />
+                  <label for="cat-nombre" class="form-label">Descripción</label>
+                  <input type="text" id="cat-nombre" class="form-control" placeholder="Ej: Redes e Insumos" maxlength="255" required />
                 </div>
+                <div id="error-form-cat" class="text-danger small"></div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="submit" class="btn btn-primary" id="btn-guardar-cat">Guardar</button>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL VER CATEGORÍA -->
+      <div class="modal fade" id="modalVerCat" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Detalle de Categoría</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detalle-cat"></div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
           </div>
         </div>
       </div>
