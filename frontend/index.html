@@ -1,32 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script type="module" src="/src/main.js"></script>
-  <link rel="stylesheet" href="src/style.css">
-  <title>Pagina Web</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestor de Incidencias - Concordia</title>
 </head>
 <body>
   <header>
-    <img src="https://www.concordia.gob.ar/sites/default/files/logo-muni.png" alt="Logo Municipalidad de Concordia">
+    <img class="logo" src="assets/logo-muni.png" alt="Logo Muni">
   </header>
 
   <div class="layout-cuerpo">
-  <nav>
-    <ul id="menu-lista">
-      <li><a href="#" id="link-Empleado-Municipal">Empleado Municipal</a></li>
-      <li><a href="#" id="link-Area-de-Sistemas">Area de Sistemas</a></li>
-      <li><a href="#" id="link-Director">Director</a></li>
-    </ul>
-  </nav>
+    <nav>
+      <ul>
+        <li><a href="/src/pages/empleado-municipal/empleado-municipal.html">Empleado Municipal</a></li>
+        <li><a href="/src/pages/empleado-sistemas/empleado-sistemas.html">Empleado de Sistemas</a></li>
+        <li><a href="/src/pages/director/director-sistemas-sistemas.html">Director de Sistemas</a></li>
+      </ul>
+    </nav>
 
-  <!-- Le agregamos id="contenido-principal" -->
-  <main id="contenido-principal">
-    <h2>Bienvenido al Sistema</h2>
-    <p>Selecciona una opción del menú para comenzar.</p>
-  </main>
+    <main>
+      <div class="py-4">
+        <h1 class="display-5 fw-bold mb-2" style="color: #468189;">Gestor de Incidencias</h1>
+        <p class="fs-5 fw-medium mb-3" style="color: #031926;">
+          Sistema de gestión y control de incidencias informáticas del municipio.
+        </p>
+        <hr class="my-4" style="border-color: #77aca2; opacity: 0.5;">
+        <p class="fs-6" style="color: #2b3a42;">
+          Por favor, seleccione su rol en la barra lateral para acceder a sus funciones asignadas.
+        </p>
+      </div>
+    </main>
   </div>
-<!--  <footer>Derechos reservados Municipalidad de Concordia 2026</footer> -->
+
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
