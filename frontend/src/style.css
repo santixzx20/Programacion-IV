@@ -1,5 +1,9 @@
+html {
+  overflow-y: scroll;
+}
+
 header {
-  background-color: #383c3d;
+  background-color: #031926; /* Azul oscuro profundo de la paleta */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,7 +17,7 @@ body {
 }
 
 nav {
-  background-color: #4b7883;
+  background-color: #468189; /* Tono petróleo exacto de la paleta */
   display: flex;
   flex-direction: column;
   width: 200px;
@@ -29,33 +33,34 @@ nav li {
 }
 
 nav a {
-  color: white;             /* Letra blanca para contrastar con el fondo azul */
+  color: white;             /* Letra blanca para contrastar con el fondo */
   text-decoration: none;    /* Saca el subrayado */
   display: block;           /* Hace que toda la cajita sea clickeable */
   padding: 8px 20px;
   width: 100%;
+  transition: background-color 0.2s ease;
 }
 
 nav a:hover {
-  background-color: rgba(255, 255, 255, 0.2); /* Efecto al pasar el mouse por encima */
+  background-color: #77aca2; /* Verde agua suave al pasar el mouse */
+  color: #031926;            /* Texto oscuro en hover para lectura clara */
 }
 
 main {
   flex: 1;
-  padding: 20px; /* Para que el contenido no quede pegado a los bordes */
-  background-color: #8c949b; /* Un gris muy suave para distinguirlo del fondo blanco */
-  position: relative; /* para que las demas se puedan poner en posición fija */
+  padding: 20px;
+  background-color: #f4e9cd; /* Crema cálido de la paleta: resalta y da legibilidad */
+  position: relative;
+  min-height: 120vh;         /* Da espacio extra abajo para scrollear */
 }
 
-.whatsapp-boton {
-  position: absolute;
-  bottom: 20px;
+/* Títulos y textos principales dentro del fondo crema */
+main h1, main h2, main h3 {
+  color: #031926;
 }
 
-.facebook-boton {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
+main p, main span {
+  color: #2b3a42;
 }
 
 .layout-cuerpo {
