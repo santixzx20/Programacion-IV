@@ -194,7 +194,7 @@ export const schemas = {
 
 export const paths = {
   // ---------------- Auth ----------------
-  '/api/auth/login': {
+  '/api/v1/auth/login': {
     post: {
       tags: ['Autenticación'],
       summary: 'Inicia sesión y devuelve un token JWT',
@@ -208,7 +208,7 @@ export const paths = {
       },
     },
   },
-  '/api/auth/me': {
+  '/api/v1/auth/me': {
     get: {
       tags: ['Autenticación'],
       summary: 'Devuelve los datos del usuario autenticado',
@@ -220,8 +220,34 @@ export const paths = {
     },
   },
 
+  '/api/v1/auth/avatar': {
+    post: {
+      tags: ['Autenticación'],
+      summary: 'Sube y actualiza el avatar del usuario autenticado',
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              properties: {
+                avatar: { type: 'string', format: 'binary', description: 'JPG, PNG o WEBP de hasta 2 MB' },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        200: okObjeto('Avatar actualizado', 'UsuarioPublico'),
+        400: error('Archivo faltante, formato no permitido o mayor a 2 MB'),
+        401: error('Token no proporcionado, inválido o vencido'),
+        500: respuesta('ErrorInterno'),
+      },
+    },
+  },
+
   // ---------------- Categorías ----------------
-  '/api/categorias': {
+  '/api/v1/categorias': {
     get: {
       tags: ['Categorías'],
       summary: 'Lista todas las categorías activas',
@@ -241,7 +267,7 @@ export const paths = {
       },
     },
   },
-  '/api/categorias/{id}': {
+  '/api/v1/categorias/{id}': {
     get: {
       tags: ['Categorías'],
       summary: 'Obtiene una categoría por su ID',
@@ -273,7 +299,7 @@ export const paths = {
   },
 
   // ---------------- Artículos ----------------
-  '/api/articulos': {
+  '/api/v1/articulos': {
     get: {
       tags: ['Artículos'],
       summary: 'Lista los artículos activos',
@@ -296,7 +322,7 @@ export const paths = {
       },
     },
   },
-  '/api/articulos/{id}': {
+  '/api/v1/articulos/{id}': {
     get: {
       tags: ['Artículos'],
       summary: 'Obtiene un artículo por su ID',
@@ -330,7 +356,7 @@ export const paths = {
   },
 
   // ---------------- Incidencias ----------------
-  '/api/incidencias': {
+  '/api/v1/incidencias': {
     get: {
       tags: ['Incidencias'],
       summary: 'Lista incidencias según el rol del usuario',
@@ -358,7 +384,7 @@ export const paths = {
       },
     },
   },
-  '/api/incidencias/{id}': {
+  '/api/v1/incidencias/{id}': {
     get: {
       tags: ['Incidencias'],
       summary: 'Obtiene una incidencia por su ID',
@@ -371,7 +397,7 @@ export const paths = {
       },
     },
   },
-  '/api/incidencias/{id}/cancelar': {
+  '/api/v1/incidencias/{id}/cancelar': {
     patch: {
       tags: ['Incidencias'],
       summary: 'Cancela una incidencia (dueño o Director)',
@@ -386,7 +412,7 @@ export const paths = {
       },
     },
   },
-  '/api/incidencias/{id}/asignar': {
+  '/api/v1/incidencias/{id}/asignar': {
     patch: {
       tags: ['Incidencias'],
       summary: 'Asigna una incidencia a un empleado de Sistemas (Director)',
@@ -402,7 +428,7 @@ export const paths = {
       },
     },
   },
-  '/api/incidencias/{id}/finalizar': {
+  '/api/v1/incidencias/{id}/finalizar': {
     patch: {
       tags: ['Incidencias'],
       summary: 'Finaliza una incidencia asignada (rol Sistemas)',
@@ -421,7 +447,7 @@ export const paths = {
   },
 
   // ---------------- Dashboard ----------------
-  '/api/dashboard/resumen': {
+  '/api/v1/dashboard/resumen': {
     get: {
       tags: ['Dashboard'],
       summary: 'Resumen de incidencias para el Director',
@@ -435,21 +461,21 @@ export const paths = {
   },
 
   // ---------------- Catálogos ----------------
-  '/api/areas': {
+  '/api/v1/areas': {
     get: {
       tags: ['Catálogos'],
       summary: 'Lista las áreas activas',
       responses: { 200: okArray('Area'), 401: error('No autenticado'), 500: respuesta('ErrorInterno') },
     },
   },
-  '/api/estados': {
+  '/api/v1/estados': {
     get: {
       tags: ['Catálogos'],
       summary: 'Lista los estados activos',
       responses: { 200: okArray('Estado'), 401: error('No autenticado'), 500: respuesta('ErrorInterno') },
     },
   },
-  '/api/usuarios': {
+  '/api/v1/usuarios': {
     get: {
       tags: ['Catálogos'],
       summary: 'Lista usuarios activos (rol Director)',
@@ -467,7 +493,7 @@ export const paths = {
   },
 
   // ---------------- Reportes ----------------
-  '/api/reportes/incidencias.pdf': {
+  '/api/v1/reportes/incidencias.pdf': {
     get: {
       tags: ['Reportes'],
       summary: 'Genera el reporte de incidencias en PDF (rol Director)',

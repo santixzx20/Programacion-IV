@@ -57,7 +57,7 @@ npm install
 npm run dev
 ```
 
-- API: `http://localhost:3000/api`
+- API: `http://localhost:3000/api/v1` (se mantiene `/api` como alias)
 - Swagger: `http://localhost:3000/api-docs`
 
 ### 3. Frontend
@@ -88,30 +88,30 @@ Cada request envía `Authorization: Bearer <token>` y las pantallas verifican el
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| POST | `/api/auth/login` | Inicia sesión y devuelve el token JWT |
-| GET | `/api/auth/me` | Datos del usuario autenticado |
-| POST | `/api/auth/avatar` | Sube y actualiza el avatar del usuario (`multer`) |
-| GET | `/api/categorias` | Lista categorías activas (rol Sistemas) |
-| GET | `/api/categorias/:id` | Obtiene una categoría |
-| POST | `/api/categorias` | Crea una categoría |
-| PUT | `/api/categorias/:id` | Actualiza una categoría |
-| DELETE | `/api/categorias/:id` | Baja lógica |
-| GET | `/api/articulos` | Lista artículos (filtros `id_area`, `id_categoria`) |
-| GET | `/api/articulos/:id` | Obtiene un artículo |
-| POST | `/api/articulos` | Crea un artículo (rol Sistemas) |
-| PUT | `/api/articulos/:id` | Actualiza un artículo (rol Sistemas) |
-| DELETE | `/api/articulos/:id` | Baja lógica (rol Sistemas) |
-| GET | `/api/incidencias` | Lista según el rol (filtros `id_estado`, `prioridad`, `id_area`, `desde`, `hasta`) |
-| GET | `/api/incidencias/:id` | Detalle de la incidencia |
-| POST | `/api/incidencias` | Crea una incidencia (rol Municipal) |
-| PATCH | `/api/incidencias/:id/cancelar` | Cancela (dueño o Director) |
-| PATCH | `/api/incidencias/:id/asignar` | Asigna a un empleado de Sistemas (Director) |
-| PATCH | `/api/incidencias/:id/finalizar` | Finaliza con resolución (Sistemas asignado) |
-| GET | `/api/dashboard/resumen` | Totales por estado, por fecha y prioritarias (Director) |
-| GET | `/api/areas` | Áreas activas |
-| GET | `/api/estados` | Estados activos |
-| GET | `/api/usuarios` | Usuarios activos (filtros `rol`, `id_area`, rol Director) |
-| GET | `/api/reportes/incidencias.pdf` | Reporte PDF (rol Director) |
+| POST | `/api/v1/auth/login` | Inicia sesión y devuelve el token JWT |
+| GET | `/api/v1/auth/me` | Datos del usuario autenticado |
+| POST | `/api/v1/auth/avatar` | Sube y actualiza el avatar del usuario (`multer`) |
+| GET | `/api/v1/categorias` | Lista categorías activas (rol Sistemas) |
+| GET | `/api/v1/categorias/:id` | Obtiene una categoría |
+| POST | `/api/v1/categorias` | Crea una categoría |
+| PUT | `/api/v1/categorias/:id` | Actualiza una categoría |
+| DELETE | `/api/v1/categorias/:id` | Baja lógica |
+| GET | `/api/v1/articulos` | Lista artículos (filtros `id_area`, `id_categoria`) |
+| GET | `/api/v1/articulos/:id` | Obtiene un artículo |
+| POST | `/api/v1/articulos` | Crea un artículo (rol Sistemas) |
+| PUT | `/api/v1/articulos/:id` | Actualiza un artículo (rol Sistemas) |
+| DELETE | `/api/v1/articulos/:id` | Baja lógica (rol Sistemas) |
+| GET | `/api/v1/incidencias` | Lista según el rol (filtros `id_estado`, `prioridad`, `id_area`, `desde`, `hasta`) |
+| GET | `/api/v1/incidencias/:id` | Detalle de la incidencia |
+| POST | `/api/v1/incidencias` | Crea una incidencia (rol Municipal) |
+| PATCH | `/api/v1/incidencias/:id/cancelar` | Cancela (dueño o Director) |
+| PATCH | `/api/v1/incidencias/:id/asignar` | Asigna a un empleado de Sistemas (Director) |
+| PATCH | `/api/v1/incidencias/:id/finalizar` | Finaliza con resolución (Sistemas asignado) |
+| GET | `/api/v1/dashboard/resumen` | Totales por estado, por fecha y prioritarias (Director) |
+| GET | `/api/v1/areas` | Áreas activas |
+| GET | `/api/v1/estados` | Estados activos |
+| GET | `/api/v1/usuarios` | Usuarios activos (filtros `rol`, `id_area`, rol Director) |
+| GET | `/api/v1/reportes/incidencias.pdf` | Reporte PDF (rol Director) |
 
 Los cambios de estado se hacen dentro de **transacciones**, registran el historial en `incidencias_estados` y disparan un correo al solicitante cuando la incidencia se **finaliza o cancela**.
 
