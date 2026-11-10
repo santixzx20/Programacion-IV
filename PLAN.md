@@ -165,7 +165,7 @@ Las 7 tablas del diagrama existen y tienen datos de prueba, pero:
 
 Completado y probado:
 
-- Base de datos recreada con `01_schema.sql` + `02_seed.sql` (7 incidencias, 4 usuarios).
+- Base de datos `incidencias_db` administrada desde pgAdmin; el backend sólo se conecta vía `.env` (sin scripts automáticos).
 - BREAD de categorías y artículos con soft delete.
 - Flujo de incidencias con transacciones, historial y permisos por rol.
 - **JWT**: `POST /api/auth/login`, `GET /api/auth/me`, middleware `autenticar` y `autorizar`.

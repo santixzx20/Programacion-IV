@@ -30,11 +30,6 @@ Programacion-IV-main/
 │   │   └── index.js           # servidor Express
 │   ├── .env.example
 │   └── package.json
-├── database/
-│   ├── 01_schema.sql
-│   ├── 02_seed.sql
-│   ├── 03_upgrade_existing.sql
-│   └── README.md
 ├── frontend/
 │   ├── index.html
 │   ├── assets/
@@ -51,14 +46,7 @@ Programacion-IV-main/
 
 ### 1. Base de datos
 
-Seguir `database/README.md`. Resumen:
-
-```bash
-psql -U postgres -d incidencias_db -f database/01_schema.sql
-psql -U postgres -d incidencias_db -f database/02_seed.sql
-```
-
-También se pueden ejecutar desde el Query Tool de pgAdmin 4.
+La base `incidencias_db` ya está creada y se administra con **pgAdmin 4**. El backend no crea tablas ni carga datos: sólo se conecta usando las credenciales del `.env`.
 
 ### 2. Backend
 
