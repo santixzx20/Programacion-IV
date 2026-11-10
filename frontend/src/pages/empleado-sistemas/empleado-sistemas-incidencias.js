@@ -2,7 +2,7 @@ import '../../style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { listarIncidencias, finalizarIncidencia } from '../../api.js';
-import { escaparHTML, badgeEstado, alerta } from '../../ui.js';
+import { badgeEstado, alerta, filaMensaje } from '../../ui.js';
 import { requerirSesion } from '../../auth.js';
 
 const usuario = requerirSesion(2);
@@ -18,30 +18,54 @@ function renderizarTabla() {
   if (!tbody) return;
 
   if (!incidencias.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">No tenés incidencias asignadas con ese filtro.</td></tr>`;
+    filaMensaje(tbody, 6, 'No tenés incidencias asignadas con ese filtro.');
     return;
   }
 
-  tbody.innerHTML = incidencias.map((inc) => {
-    const cerrada = inc.estado === 'Finalizada' || inc.estado === 'Cancelada';
-    return `
-      <tr>
-        <td class="ps-3 fw-bold">#${inc.id_incidencia}</td>
-        <td>${escaparHTML(inc.articulo)}</td>
-        <td>${escaparHTML(inc.descripcion_pedido)}</td>
-        <td><span class="badge bg-light text-dark border">${escaparHTML(inc.prioridad_texto)}</span></td>
-        <td><span class="badge ${badgeEstado(inc.estado)}">${escaparHTML(inc.estado)}</span></td>
-        <td class="text-end pe-3">
-          <button class="btn btn-success btn-sm btn-finalizar" data-id="${inc.id_incidencia}" ${cerrada ? 'disabled' : ''}>
-            <i class="bi bi-check2-circle"></i> Finalizar
-          </button>
-        </td>
-      </tr>
-    `;
-  }).join('');
+  tbody.textContent = '';
 
-  document.querySelectorAll('.btn-finalizar').forEach((btn) => {
-    btn.addEventListener('click', () => finalizar(Number(btn.dataset.id)));
+  incidencias.forEach((inc) => {
+    const cerrada = inc.estado === 'Finalizada' || inc.estado === 'Cancelada';
+    const tr = document.createElement('tr');
+
+    const tdId = document.createElement('td');
+    tdId.className = 'ps-3 fw-bold';
+    tdId.textContent = `#${inc.id_incidencia}`;
+
+    const tdArticulo = document.createElement('td');
+    tdArticulo.textContent = inc.articulo;
+
+    const tdDescripcion = document.createElement('td');
+    tdDescripcion.textContent = inc.descripcion_pedido;
+
+    const tdPrioridad = document.createElement('td');
+    const badgePrioridad = document.createElement('span');
+    badgePrioridad.className = 'badge bg-light text-dark border';
+    badgePrioridad.textContent = inc.prioridad_texto;
+    tdPrioridad.appendChild(badgePrioridad);
+
+    const tdEstado = document.createElement('td');
+    const spanEstado = document.createElement('span');
+    spanEstado.className = `badge ${badgeEstado(inc.estado)}`;
+    spanEstado.textContent = inc.estado;
+    tdEstado.appendChild(spanEstado);
+
+    const tdAccion = document.createElement('td');
+    tdAccion.className = 'text-end pe-3';
+
+    const btnFinalizar = document.createElement('button');
+    btnFinalizar.className = 'btn btn-success btn-sm';
+    btnFinalizar.disabled = cerrada;
+
+    const icono = document.createElement('i');
+    icono.className = 'bi bi-check2-circle me-1';
+    btnFinalizar.append(icono, 'Finalizar');
+
+    btnFinalizar.addEventListener('click', () => finalizar(inc.id_incidencia));
+
+    tdAccion.appendChild(btnFinalizar);
+    tr.append(tdId, tdArticulo, tdDescripcion, tdPrioridad, tdEstado, tdAccion);
+    tbody.appendChild(tr);
   });
 }
 

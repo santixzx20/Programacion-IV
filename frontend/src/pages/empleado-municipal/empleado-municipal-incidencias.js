@@ -5,7 +5,7 @@ import * as bootstrap from 'bootstrap';
 import {
   listarIncidencias, crearIncidencia, cancelarIncidencia, listarArticulos,
 } from '../../api.js';
-import { escaparHTML, badgeEstado, alerta } from '../../ui.js';
+import { badgeEstado, alerta, filaMensaje } from '../../ui.js';
 import { requerirSesion } from '../../auth.js';
 
 const usuario = requerirSesion(1);
@@ -21,30 +21,50 @@ function renderizarTabla() {
   if (!tbody) return;
 
   if (!incidencias.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Todavía no registraste incidencias.</td></tr>`;
+    filaMensaje(tbody, 6, 'Todavía no registraste incidencias.');
     return;
   }
 
-  tbody.innerHTML = incidencias.map((inc) => {
-    const cancelable = inc.estado === 'Pendiente';
-    return `
-      <tr>
-        <td class="ps-3 fw-bold">#${inc.id_incidencia}</td>
-        <td>${escaparHTML(inc.articulo)}</td>
-        <td>${escaparHTML(inc.descripcion_pedido)}</td>
-        <td><span class="badge bg-light text-dark border">${escaparHTML(inc.prioridad_texto)}</span></td>
-        <td><span class="badge ${badgeEstado(inc.estado)}">${escaparHTML(inc.estado)}</span></td>
-        <td class="text-end pe-3">
-          <button class="btn btn-outline-danger btn-sm btn-cancelar" data-id="${inc.id_incidencia}" ${cancelable ? '' : 'disabled'}>
-            Cancelar
-          </button>
-        </td>
-      </tr>
-    `;
-  }).join('');
+  tbody.textContent = '';
 
-  document.querySelectorAll('.btn-cancelar').forEach((btn) => {
-    btn.addEventListener('click', () => cancelar(Number(btn.dataset.id)));
+  incidencias.forEach((inc) => {
+    const cancelable = inc.estado === 'Pendiente';
+    const tr = document.createElement('tr');
+
+    const tdId = document.createElement('td');
+    tdId.className = 'ps-3 fw-bold';
+    tdId.textContent = `#${inc.id_incidencia}`;
+
+    const tdArticulo = document.createElement('td');
+    tdArticulo.textContent = inc.articulo;
+
+    const tdDescripcion = document.createElement('td');
+    tdDescripcion.textContent = inc.descripcion_pedido;
+
+    const tdPrioridad = document.createElement('td');
+    const badgePrioridad = document.createElement('span');
+    badgePrioridad.className = 'badge bg-light text-dark border';
+    badgePrioridad.textContent = inc.prioridad_texto;
+    tdPrioridad.appendChild(badgePrioridad);
+
+    const tdEstado = document.createElement('td');
+    const spanEstado = document.createElement('span');
+    spanEstado.className = `badge ${badgeEstado(inc.estado)}`;
+    spanEstado.textContent = inc.estado;
+    tdEstado.appendChild(spanEstado);
+
+    const tdAccion = document.createElement('td');
+    tdAccion.className = 'text-end pe-3';
+
+    const btnCancelar = document.createElement('button');
+    btnCancelar.className = 'btn btn-outline-danger btn-sm';
+    btnCancelar.textContent = 'Cancelar';
+    btnCancelar.disabled = !cancelable;
+    btnCancelar.addEventListener('click', () => cancelar(inc.id_incidencia));
+
+    tdAccion.appendChild(btnCancelar);
+    tr.append(tdId, tdArticulo, tdDescripcion, tdPrioridad, tdEstado, tdAccion);
+    tbody.appendChild(tr);
   });
 }
 
@@ -61,8 +81,21 @@ async function cargarSelectArticulos() {
   const select = document.getElementById('select-articulo');
   try {
     const articulos = await listarArticulos();
-    select.innerHTML = `<option value="" disabled selected>Seleccione un artículo...</option>` +
-      articulos.map((a) => `<option value="${a.id_articulo}">${escaparHTML(a.descripcion)}</option>`).join('');
+    select.textContent = '';
+
+    const optInicial = document.createElement('option');
+    optInicial.value = '';
+    optInicial.disabled = true;
+    optInicial.selected = true;
+    optInicial.textContent = 'Seleccione un artículo...';
+    select.appendChild(optInicial);
+
+    articulos.forEach((a) => {
+      const option = document.createElement('option');
+      option.value = a.id_articulo;
+      option.textContent = a.descripcion;
+      select.appendChild(option);
+    });
   } catch (error) {
     alerta('alerta-inc', error.message, 'danger');
   }

@@ -9,6 +9,7 @@ import {
   editarCategoria,
   eliminarCategoria,
 } from '../../api.js';
+import { alerta, filaMensaje } from '../../ui.js';
 import { requerirSesion } from '../../auth.js';
 
 const usuario = requerirSesion(2);
@@ -17,21 +18,9 @@ if (!usuario) await new Promise(() => {});
 const modalCat = new bootstrap.Modal(document.getElementById('modalCat'));
 const modalVerCat = new bootstrap.Modal(document.getElementById('modalVerCat'));
 
-// Evita que un texto escrito por el usuario se interprete como HTML
-function escaparHTML(texto) {
-  const div = document.createElement('div');
-  div.textContent = texto;
-  return div.innerHTML;
-}
-
 // Muestra un mensaje arriba de la tabla (tipo: 'success' o 'danger')
 function mostrarAlerta(mensaje, tipo = 'success') {
-  document.getElementById('alerta-cat').innerHTML = `
-    <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-      ${escaparHTML(mensaje)}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-  `;
+  alerta('alerta-cat', mensaje, tipo);
 }
 
 // BROWSE: pide las categorías activas al backend y dibuja la tabla
@@ -39,47 +28,54 @@ async function renderizarTabla() {
   const tbody = document.getElementById('tabla-categorias');
   if (!tbody) return;
 
-  tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-4">Cargando...</td></tr>`;
+  filaMensaje(tbody, 3, 'Cargando...');
 
   let categorias;
   try {
     categorias = await listarCategorias();
   } catch (error) {
-    tbody.innerHTML = `<tr><td colspan="3" class="text-center text-danger py-4">${escaparHTML(error.message)}</td></tr>`;
+    filaMensaje(tbody, 3, error.message, 'text-danger');
     return;
   }
 
   if (categorias.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-4">No hay categorías registradas.</td></tr>`;
+    filaMensaje(tbody, 3, 'No hay categorías registradas.');
     return;
   }
 
-  tbody.innerHTML = categorias.map(cat => `
-    <tr>
-      <td class="ps-3 fw-bold">#${cat.id_categoria}</td>
-      <td>${escaparHTML(cat.descripcion)}</td>
-      <td class="text-end pe-3">
-        <button class="btn btn-outline-primary btn-sm btn-ver me-1" data-id="${cat.id_categoria}">
-          Ver
-        </button>
-        <button class="btn btn-outline-secondary btn-sm btn-edit me-1" data-id="${cat.id_categoria}">
-          Editar
-        </button>
-        <button class="btn btn-outline-danger btn-sm btn-del" data-id="${cat.id_categoria}">
-          Eliminar
-        </button>
-      </td>
-    </tr>
-  `).join('');
+  tbody.textContent = '';
 
-  document.querySelectorAll('.btn-ver').forEach(btn => {
-    btn.addEventListener('click', (e) => verCategoria(Number(e.currentTarget.dataset.id)));
-  });
-  document.querySelectorAll('.btn-edit').forEach(btn => {
-    btn.addEventListener('click', (e) => abrirModal(Number(e.currentTarget.dataset.id)));
-  });
-  document.querySelectorAll('.btn-del').forEach(btn => {
-    btn.addEventListener('click', (e) => borrarCategoria(Number(e.currentTarget.dataset.id)));
+  categorias.forEach(cat => {
+    const tr = document.createElement('tr');
+
+    const tdId = document.createElement('td');
+    tdId.className = 'ps-3 fw-bold';
+    tdId.textContent = `#${cat.id_categoria}`;
+
+    const tdDescripcion = document.createElement('td');
+    tdDescripcion.textContent = cat.descripcion;
+
+    const tdAcciones = document.createElement('td');
+    tdAcciones.className = 'text-end pe-3';
+
+    const btnVer = document.createElement('button');
+    btnVer.className = 'btn btn-outline-primary btn-sm me-1';
+    btnVer.textContent = 'Ver';
+    btnVer.addEventListener('click', () => verCategoria(cat.id_categoria));
+
+    const btnEditar = document.createElement('button');
+    btnEditar.className = 'btn btn-outline-secondary btn-sm me-1';
+    btnEditar.textContent = 'Editar';
+    btnEditar.addEventListener('click', () => abrirModal(cat.id_categoria));
+
+    const btnEliminar = document.createElement('button');
+    btnEliminar.className = 'btn btn-outline-danger btn-sm';
+    btnEliminar.textContent = 'Eliminar';
+    btnEliminar.addEventListener('click', () => borrarCategoria(cat.id_categoria));
+
+    tdAcciones.append(btnVer, btnEditar, btnEliminar);
+    tr.append(tdId, tdDescripcion, tdAcciones);
+    tbody.appendChild(tr);
   });
 }
 
@@ -87,16 +83,8 @@ async function renderizarTabla() {
 async function verCategoria(id) {
   try {
     const cat = await obtenerCategoria(id);
-    document.getElementById('detalle-cat').innerHTML = `
-      <dl class="row mb-0">
-        <dt class="col-4">ID</dt>
-        <dd class="col-8">#${cat.id_categoria}</dd>
-        <dt class="col-4">Descripción</dt>
-        <dd class="col-8">${escaparHTML(cat.descripcion)}</dd>
-        <dt class="col-4">Estado</dt>
-        <dd class="col-8"><span class="badge bg-success">Activa</span></dd>
-      </dl>
-    `;
+    document.getElementById('ver-cat-id').textContent = `#${cat.id_categoria}`;
+    document.getElementById('ver-cat-descripcion').textContent = cat.descripcion;
     modalVerCat.show();
   } catch (error) {
     mostrarAlerta(error.message, 'danger');

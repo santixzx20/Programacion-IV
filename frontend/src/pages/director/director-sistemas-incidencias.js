@@ -5,7 +5,7 @@ import * as bootstrap from 'bootstrap';
 import {
   listarIncidencias, cancelarIncidencia, asignarIncidencia, listarUsuarios,
 } from '../../api.js';
-import { escaparHTML, badgeEstado, alerta } from '../../ui.js';
+import { badgeEstado, alerta, filaMensaje } from '../../ui.js';
 import { requerirSesion } from '../../auth.js';
 
 const usuario = requerirSesion(3);
@@ -21,40 +21,70 @@ function renderizarTabla() {
   if (!tbody) return;
 
   if (!incidencias.length) {
-    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">No hay incidencias registradas.</td></tr>`;
+    filaMensaje(tbody, 7, 'No hay incidencias registradas.');
     return;
   }
 
-  tbody.innerHTML = incidencias.map((inc) => {
+  tbody.textContent = '';
+
+  incidencias.forEach((inc) => {
     const cerrada = inc.estado === 'Finalizada' || inc.estado === 'Cancelada';
     const cancelable = inc.estado === 'Pendiente';
-    return `
-      <tr>
-        <td class="ps-3 fw-bold">#${inc.id_incidencia}</td>
-        <td>${escaparHTML(inc.articulo)}</td>
-        <td>${escaparHTML(inc.descripcion_pedido)}</td>
-        <td><span class="badge bg-light text-dark border">${escaparHTML(inc.prioridad_texto)}</span></td>
-        <td><span class="badge ${badgeEstado(inc.estado)}">${escaparHTML(inc.estado)}</span></td>
-        <td class="text-center">
-          <div class="small text-muted mb-1">${escaparHTML(inc.asignado_a_nombre || 'Sin asignar')}</div>
-          <button class="btn btn-outline-primary btn-sm btn-asignar" data-id="${inc.id_incidencia}" ${cerrada ? 'disabled' : ''}>
-            <i class="bi bi-person-plus"></i> ${inc.asignado_a ? 'Reasignar' : 'Asignar'}
-          </button>
-        </td>
-        <td class="text-end pe-3">
-          <button class="btn btn-outline-danger btn-sm btn-cancelar" data-id="${inc.id_incidencia}" ${cancelable ? '' : 'disabled'}>
-            Cancelar
-          </button>
-        </td>
-      </tr>
-    `;
-  }).join('');
+    const tr = document.createElement('tr');
 
-  document.querySelectorAll('.btn-asignar').forEach((btn) => {
-    btn.addEventListener('click', () => abrirAsignar(Number(btn.dataset.id)));
-  });
-  document.querySelectorAll('.btn-cancelar').forEach((btn) => {
-    btn.addEventListener('click', () => cancelar(Number(btn.dataset.id)));
+    const tdId = document.createElement('td');
+    tdId.className = 'ps-3 fw-bold';
+    tdId.textContent = `#${inc.id_incidencia}`;
+
+    const tdArticulo = document.createElement('td');
+    tdArticulo.textContent = inc.articulo;
+
+    const tdDescripcion = document.createElement('td');
+    tdDescripcion.textContent = inc.descripcion_pedido;
+
+    const tdPrioridad = document.createElement('td');
+    const badgePrioridad = document.createElement('span');
+    badgePrioridad.className = 'badge bg-light text-dark border';
+    badgePrioridad.textContent = inc.prioridad_texto;
+    tdPrioridad.appendChild(badgePrioridad);
+
+    const tdEstado = document.createElement('td');
+    const spanEstado = document.createElement('span');
+    spanEstado.className = `badge ${badgeEstado(inc.estado)}`;
+    spanEstado.textContent = inc.estado;
+    tdEstado.appendChild(spanEstado);
+
+    const tdAsignacion = document.createElement('td');
+    tdAsignacion.className = 'text-center';
+
+    const divAsignado = document.createElement('div');
+    divAsignado.className = 'small text-muted mb-1';
+    divAsignado.textContent = inc.asignado_a_nombre || 'Sin asignar';
+
+    const btnAsignar = document.createElement('button');
+    btnAsignar.className = 'btn btn-outline-primary btn-sm';
+    btnAsignar.disabled = cerrada;
+
+    const iconoAsignar = document.createElement('i');
+    iconoAsignar.className = 'bi bi-person-plus me-1';
+    btnAsignar.append(iconoAsignar, inc.asignado_a ? 'Reasignar' : 'Asignar');
+    btnAsignar.addEventListener('click', () => abrirAsignar(inc.id_incidencia));
+
+    tdAsignacion.append(divAsignado, btnAsignar);
+
+    const tdAccion = document.createElement('td');
+    tdAccion.className = 'text-end pe-3';
+
+    const btnCancelar = document.createElement('button');
+    btnCancelar.className = 'btn btn-outline-danger btn-sm';
+    btnCancelar.textContent = 'Cancelar';
+    btnCancelar.disabled = !cancelable;
+    btnCancelar.addEventListener('click', () => cancelar(inc.id_incidencia));
+
+    tdAccion.appendChild(btnCancelar);
+
+    tr.append(tdId, tdArticulo, tdDescripcion, tdPrioridad, tdEstado, tdAsignacion, tdAccion);
+    tbody.appendChild(tr);
   });
 }
 
@@ -64,9 +94,24 @@ async function cargarDatos() {
       listarIncidencias(),
       listarUsuarios({ rol: 2 }),
     ]);
-    document.getElementById('asignar-usuario').innerHTML =
-      `<option value="" disabled selected>Seleccione un empleado...</option>` +
-      empleados.map((u) => `<option value="${u.id_usuario}">${escaparHTML(`${u.apellidos}, ${u.nombres}`)}</option>`).join('');
+
+    const selectUsuario = document.getElementById('asignar-usuario');
+    selectUsuario.textContent = '';
+
+    const optInicial = document.createElement('option');
+    optInicial.value = '';
+    optInicial.disabled = true;
+    optInicial.selected = true;
+    optInicial.textContent = 'Seleccione un empleado...';
+    selectUsuario.appendChild(optInicial);
+
+    empleados.forEach((u) => {
+      const option = document.createElement('option');
+      option.value = u.id_usuario;
+      option.textContent = `${u.apellidos}, ${u.nombres}`;
+      selectUsuario.appendChild(option);
+    });
+
     renderizarTabla();
   } catch (error) {
     alerta('alerta-dir', error.message, 'danger');

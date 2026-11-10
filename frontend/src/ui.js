@@ -1,12 +1,5 @@
 // Utilidades compartidas por las pantallas
 
-// Evita que un texto escrito por el usuario se interprete como HTML
-export function escaparHTML(texto = '') {
-  const div = document.createElement('div');
-  div.textContent = texto;
-  return div.innerHTML;
-}
-
 // Clase de Bootstrap según el estado de la incidencia
 export function badgeEstado(estado) {
   switch (estado) {
@@ -27,10 +20,33 @@ export function formatearFecha(iso) {
 export function alerta(contenedorId, mensaje, tipo = 'success') {
   const contenedor = document.getElementById(contenedorId);
   if (!contenedor) return;
-  contenedor.innerHTML = `
-    <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-      ${escaparHTML(mensaje)}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-  `;
+
+  contenedor.textContent = '';
+
+  const div = document.createElement('div');
+  div.className = `alert alert-${tipo} alert-dismissible fade show`;
+  div.role = 'alert';
+  div.textContent = mensaje;
+
+  const botonCerrar = document.createElement('button');
+  botonCerrar.type = 'button';
+  botonCerrar.className = 'btn-close';
+  botonCerrar.setAttribute('data-bs-dismiss', 'alert');
+
+  div.appendChild(botonCerrar);
+  contenedor.appendChild(div);
+}
+
+// Muestra una fila con un mensaje centrado en una tabla (ej: cargando, error o sin datos)
+export function filaMensaje(tbody, columnas, texto, claseColor = 'text-muted') {
+  tbody.textContent = '';
+
+  const tr = document.createElement('tr');
+  const td = document.createElement('td');
+  td.colSpan = columnas;
+  td.className = `text-center ${claseColor} py-4`;
+  td.textContent = texto;
+
+  tr.appendChild(td);
+  tbody.appendChild(tr);
 }

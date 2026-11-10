@@ -6,7 +6,7 @@ import {
   listarArticulos, crearArticulo, editarArticulo, eliminarArticulo,
   listarCategorias, listarAreas,
 } from '../../api.js';
-import { escaparHTML, alerta } from '../../ui.js';
+import { alerta, filaMensaje } from '../../ui.js';
 import { requerirSesion } from '../../auth.js';
 
 const usuario = requerirSesion(2);
@@ -22,28 +22,50 @@ function renderizarTabla() {
   if (!tbody) return;
 
   if (!articulos.length) {
-    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">No hay artículos registrados.</td></tr>`;
+    filaMensaje(tbody, 5, 'No hay artículos registrados.');
     return;
   }
 
-  tbody.innerHTML = articulos.map((art) => `
-    <tr>
-      <td class="ps-3 fw-bold">#${art.id_articulo}</td>
-      <td>${escaparHTML(art.descripcion)}</td>
-      <td><span class="badge bg-light text-dark border">${escaparHTML(art.area)}</span></td>
-      <td><span class="badge bg-secondary">${escaparHTML(art.categoria)}</span></td>
-      <td class="text-end pe-3">
-        <button class="btn btn-outline-secondary btn-sm btn-edit-art me-1" data-id="${art.id_articulo}">Editar</button>
-        <button class="btn btn-outline-danger btn-sm btn-del-art" data-id="${art.id_articulo}">Eliminar</button>
-      </td>
-    </tr>
-  `).join('');
+  tbody.textContent = '';
 
-  document.querySelectorAll('.btn-edit-art').forEach((btn) => {
-    btn.addEventListener('click', () => abrirModal(articulos.find((a) => a.id_articulo === Number(btn.dataset.id))));
-  });
-  document.querySelectorAll('.btn-del-art').forEach((btn) => {
-    btn.addEventListener('click', () => borrar(Number(btn.dataset.id)));
+  articulos.forEach((art) => {
+    const tr = document.createElement('tr');
+
+    const tdId = document.createElement('td');
+    tdId.className = 'ps-3 fw-bold';
+    tdId.textContent = `#${art.id_articulo}`;
+
+    const tdDescripcion = document.createElement('td');
+    tdDescripcion.textContent = art.descripcion;
+
+    const tdArea = document.createElement('td');
+    const badgeArea = document.createElement('span');
+    badgeArea.className = 'badge bg-light text-dark border';
+    badgeArea.textContent = art.area;
+    tdArea.appendChild(badgeArea);
+
+    const tdCategoria = document.createElement('td');
+    const badgeCategoria = document.createElement('span');
+    badgeCategoria.className = 'badge bg-secondary';
+    badgeCategoria.textContent = art.categoria;
+    tdCategoria.appendChild(badgeCategoria);
+
+    const tdAcciones = document.createElement('td');
+    tdAcciones.className = 'text-end pe-3';
+
+    const btnEditar = document.createElement('button');
+    btnEditar.className = 'btn btn-outline-secondary btn-sm me-1';
+    btnEditar.textContent = 'Editar';
+    btnEditar.addEventListener('click', () => abrirModal(art));
+
+    const btnEliminar = document.createElement('button');
+    btnEliminar.className = 'btn btn-outline-danger btn-sm';
+    btnEliminar.textContent = 'Eliminar';
+    btnEliminar.addEventListener('click', () => borrar(art.id_articulo));
+
+    tdAcciones.append(btnEditar, btnEliminar);
+    tr.append(tdId, tdDescripcion, tdArea, tdCategoria, tdAcciones);
+    tbody.appendChild(tr);
   });
 }
 
@@ -59,12 +81,38 @@ async function cargarArticulos() {
 async function cargarCatalogos() {
   try {
     const [categorias, areas] = await Promise.all([listarCategorias(), listarAreas()]);
-    document.getElementById('art-cat').innerHTML =
-      `<option value="" disabled selected>Seleccione una categoría...</option>` +
-      categorias.map((c) => `<option value="${c.id_categoria}">${escaparHTML(c.descripcion)}</option>`).join('');
-    document.getElementById('art-area').innerHTML =
-      `<option value="" disabled selected>Seleccione un área...</option>` +
-      areas.map((a) => `<option value="${a.id_area}">${escaparHTML(a.descripcion)}</option>`).join('');
+
+    const selectCat = document.getElementById('art-cat');
+    selectCat.textContent = '';
+    const optCatInicial = document.createElement('option');
+    optCatInicial.value = '';
+    optCatInicial.disabled = true;
+    optCatInicial.selected = true;
+    optCatInicial.textContent = 'Seleccione una categoría...';
+    selectCat.appendChild(optCatInicial);
+
+    categorias.forEach((c) => {
+      const option = document.createElement('option');
+      option.value = c.id_categoria;
+      option.textContent = c.descripcion;
+      selectCat.appendChild(option);
+    });
+
+    const selectArea = document.getElementById('art-area');
+    selectArea.textContent = '';
+    const optAreaInicial = document.createElement('option');
+    optAreaInicial.value = '';
+    optAreaInicial.disabled = true;
+    optAreaInicial.selected = true;
+    optAreaInicial.textContent = 'Seleccione un área...';
+    selectArea.appendChild(optAreaInicial);
+
+    areas.forEach((a) => {
+      const option = document.createElement('option');
+      option.value = a.id_area;
+      option.textContent = a.descripcion;
+      selectArea.appendChild(option);
+    });
   } catch (error) {
     alerta('alerta-art', error.message, 'danger');
   }
