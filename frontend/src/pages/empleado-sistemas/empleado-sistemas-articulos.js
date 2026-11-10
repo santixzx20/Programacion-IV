@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import * as bootstrap from 'bootstrap';
 import {
-  listarArticulos, crearArticulo, editarArticulo, eliminarArticulo,
+  listarArticulos, obtenerArticulo, crearArticulo, editarArticulo, eliminarArticulo,
   listarCategorias, listarAreas,
 } from '../../api.js';
 import { alerta, filaMensaje } from '../../ui.js';
@@ -13,6 +13,7 @@ const usuario = requerirSesion(2);
 if (!usuario) await new Promise(() => {});
 
 const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalArt'));
+const modalVer = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalVerArt'));
 const form = document.getElementById('form-art');
 let articulos = [];
 let editando = null;
@@ -53,6 +54,11 @@ function renderizarTabla() {
     const tdAcciones = document.createElement('td');
     tdAcciones.className = 'text-end pe-3';
 
+    const btnVer = document.createElement('button');
+    btnVer.className = 'btn btn-outline-primary btn-sm me-1';
+    btnVer.textContent = 'Ver';
+    btnVer.addEventListener('click', () => verArticulo(art.id_articulo));
+
     const btnEditar = document.createElement('button');
     btnEditar.className = 'btn btn-outline-secondary btn-sm me-1';
     btnEditar.textContent = 'Editar';
@@ -63,10 +69,24 @@ function renderizarTabla() {
     btnEliminar.textContent = 'Eliminar';
     btnEliminar.addEventListener('click', () => borrar(art.id_articulo));
 
-    tdAcciones.append(btnEditar, btnEliminar);
+    tdAcciones.append(btnVer, btnEditar, btnEliminar);
     tr.append(tdId, tdDescripcion, tdArea, tdCategoria, tdAcciones);
     tbody.appendChild(tr);
   });
+}
+
+// READ: pide un artículo por su ID y lo muestra en el modal de detalle
+async function verArticulo(id) {
+  try {
+    const art = await obtenerArticulo(id);
+    document.getElementById('ver-art-id').textContent = `#${art.id_articulo}`;
+    document.getElementById('ver-art-descripcion').textContent = art.descripcion;
+    document.getElementById('ver-art-area').textContent = art.area;
+    document.getElementById('ver-art-categoria').textContent = art.categoria;
+    modalVer.show();
+  } catch (error) {
+    alerta('alerta-art', error.message, 'danger');
+  }
 }
 
 async function cargarArticulos() {

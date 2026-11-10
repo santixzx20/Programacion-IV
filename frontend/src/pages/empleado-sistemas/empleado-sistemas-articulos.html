@@ -51,7 +51,7 @@
         </div>
       </div>
 
-      <!-- MODAL NUEVO ARTÍCULO -->
+      <!-- MODAL AGREGAR / EDITAR ARTÍCULO -->
       <div class="modal fade" id="modalArt" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -86,6 +86,35 @@
                 <button type="submit" class="btn btn-primary">Guardar</button>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL VER ARTÍCULO -->
+      <div class="modal fade" id="modalVerArt" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Detalle de Artículo</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <dl class="row mb-0">
+                <dt class="col-4">ID</dt>
+                <dd class="col-8" id="ver-art-id"></dd>
+                <dt class="col-4">Descripción</dt>
+                <dd class="col-8" id="ver-art-descripcion"></dd>
+                <dt class="col-4">Área</dt>
+                <dd class="col-8" id="ver-art-area"></dd>
+                <dt class="col-4">Categoría</dt>
+                <dd class="col-8" id="ver-art-categoria"></dd>
+                <dt class="col-4">Estado</dt>
+                <dd class="col-8"><span class="badge bg-success">Activo</span></dd>
+              </dl>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
           </div>
         </div>
       </div>

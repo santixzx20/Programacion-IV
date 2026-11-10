@@ -21,13 +21,18 @@ app.use(express.json()); // permite leer el body en formato JSON
 app.use('/uploads', express.static('uploads')); // sirve los avatares subidos con multer
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // Documentación Swagger
 
-app.use('/api/categorias', categoriasRoutes);
-app.use('/api/articulos', articulosRoutes);
-app.use('/api/incidencias', incidenciasRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/reportes', reportesRoutes);
-app.use('/api', catalogosRoutes); // /api/areas, /api/estados, /api/usuarios
+const apiRouter = express.Router();
+apiRouter.use('/categorias', categoriasRoutes);
+apiRouter.use('/articulos', articulosRoutes);
+apiRouter.use('/incidencias', incidenciasRoutes);
+apiRouter.use('/dashboard', dashboardRoutes);
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/reportes', reportesRoutes);
+apiRouter.use('/', catalogosRoutes); // /areas, /estados, /usuarios
+
+// Versionado de la API REST (/api/v1) manteniendo también /api por compatibilidad
+app.use('/api/v1', apiRouter);
+app.use('/api', apiRouter);
 
 // Cualquier ruta que no exista responde 404 (en vez de quedar colgada)
 app.use((req, res) => {

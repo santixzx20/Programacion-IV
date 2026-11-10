@@ -3,7 +3,7 @@
 // ==========================================================
 import { tokenActual, limpiarSesion } from './auth.js';
 
-const URL_API = 'http://localhost:3000/api';
+const URL_API = 'http://localhost:3000/api/v1';
 
 // Envía el pedido y devuelve el JSON de la respuesta.
 // Si el backend responde con error, lanza un Error con su mensaje.
