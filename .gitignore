@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno (NUNCA subir credenciales reales)
+.env
+.env.local
+.env.production
+.env.development
+
+# Archivos generados
+dist/
+build/
+uploads/
+*.log
+
+# Respaldos de base de datos
+database/backups/
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
