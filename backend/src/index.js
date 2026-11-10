@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import 'dotenv/config';
 
@@ -15,7 +16,9 @@ import reportesRoutes from './routes/reportes.routes.js';
 const app = express();
 
 app.use(cors());
+app.use(morgan('dev')); // registra cada solicitud HTTP en la consola
 app.use(express.json()); // permite leer el body en formato JSON
+app.use('/uploads', express.static('uploads')); // sirve los avatares subidos con multer
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // Documentación Swagger
 
 app.use('/api/categorias', categoriasRoutes);
@@ -37,6 +40,13 @@ app.use((err, req, res, next) => {
 
   if (err.type === 'entity.parse.failed') {
     return res.status(400).json({ mensaje: 'El JSON enviado no es válido' });
+  }
+  // Errores de carga de archivos (Multer)
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ mensaje: 'El archivo supera el tamaño máximo de 2 MB' });
+  }
+  if (err.message === 'Solo se permiten imágenes JPG, PNG o WEBP') {
+    return res.status(400).json({ mensaje: err.message });
   }
   // Códigos de error de PostgreSQL
   if (err.code === '23503') return res.status(400).json({ mensaje: 'Referencia inexistente (área, categoría o usuario)' });

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { listar, obtener, crear, actualizar, eliminar } from '../controllers/categorias.controller.js';
 import { autenticar, autorizar } from '../middlewares/auth.middleware.js';
+import { validarCategoria } from '../middlewares/validar.middleware.js';
 
 const router = Router();
 
@@ -73,7 +74,7 @@ router.get('/:id', obtener);
  *       500:
  *         $ref: '#/components/responses/ErrorInterno'
  */
-router.post('/', crear);
+router.post('/', validarCategoria, crear);
 
 /**
  * @openapi
@@ -103,7 +104,7 @@ router.post('/', crear);
  *       500:
  *         $ref: '#/components/responses/ErrorInterno'
  */
-router.put('/:id', actualizar);
+router.put('/:id', validarCategoria, actualizar);
 
 /**
  * @openapi

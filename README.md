@@ -8,6 +8,7 @@ Sistema web para registrar, asignar y resolver incidencias informáticas del mun
 
 - **Frontend:** Vite + HTML + CSS + JavaScript + Bootstrap 5.
 - **Backend:** Node.js + Express 5 (ESM) + PostgreSQL (`pg`).
+- **Middlewares:** `express-validator` (validaciones), `morgan` (registro de solicitudes) y `multer` (carga de avatar).
 - **Seguridad:** JWT (`jsonwebtoken`), contraseñas con `bcryptjs`, variables de entorno con `dotenv`.
 - **Reportes:** PDF con `pdfkit`. **Correo:** `nodemailer`.
 - **Base de datos:** PostgreSQL 18.
@@ -21,7 +22,7 @@ Programacion-IV-main/
 │   ├── src/
 │   │   ├── config/            # Swagger/OpenAPI
 │   │   ├── controllers/       # lógica de cada recurso
-│   │   ├── middlewares/       # autenticar / autorizar por rol
+│   │   ├── middlewares/       # autenticar / autorizar / validar / upload
 │   │   ├── models/            # consultas SQL
 │   │   ├── routes/            # endpoints
 │   │   ├── services/          # PDF y correo
@@ -101,6 +102,7 @@ Cada request envía `Authorization: Bearer <token>` y las pantallas verifican el
 |---|---|---|
 | POST | `/api/auth/login` | Inicia sesión y devuelve el token JWT |
 | GET | `/api/auth/me` | Datos del usuario autenticado |
+| POST | `/api/auth/avatar` | Sube y actualiza el avatar del usuario (`multer`) |
 | GET | `/api/categorias` | Lista categorías activas (rol Sistemas) |
 | GET | `/api/categorias/:id` | Obtiene una categoría |
 | POST | `/api/categorias` | Crea una categoría |
@@ -137,9 +139,5 @@ Implementado:
 - **Reporte PDF** descargable desde el dashboard del Director.
 - **Correo** al finalizar o cancelar (real por SMTP o simulado por consola).
 - **Swagger** con todos los endpoints documentados en `/api-docs`.
+- **Middlewares:** `express-validator`, `morgan` y `multer`.
 - Variables sensibles en `.env`.
-
-Pendiente (ver `PLAN.md`):
-
-- Middlewares `express-validator`, `morgan` y `multer`.
-- Repositorio GitHub y ZIP de entrega.
