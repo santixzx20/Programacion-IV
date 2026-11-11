@@ -8,7 +8,7 @@ const SELECT = `
          i.asignado_a, (ua.nombres || ' ' || ua.apellidos) AS asignado_a_nombre,
          i.creado, i.prioridad,
          CASE i.prioridad WHEN 1 THEN 'Baja' WHEN 2 THEN 'Media' ELSE 'Alta' END AS prioridad_texto,
-         i.descripcion_pedido, i.descripcion_resolucion
+         i.descripcion_pedido, i.descripcion_resolucion, i.imagen
   FROM incidencias i
   JOIN articulos art ON art.id_articulo = i.id_articulo
   JOIN estados e ON e.id_estado = i.id_estado
@@ -65,12 +65,12 @@ export const buscarPorId = async (id) => {
   return { ...rows[0], historial: historial.rows };
 };
 
-export const crear = async ({ id_articulo, creado_por, prioridad, descripcion_pedido }) => {
+export const crear = async ({ id_articulo, creado_por, prioridad, descripcion_pedido, imagen }) => {
   const id = await conTransaccion(async (client) => {
     const { rows } = await client.query(
-      `INSERT INTO incidencias (id_articulo, id_estado, creado_por, prioridad, descripcion_pedido)
-       VALUES ($1, 1, $2, $3, $4) RETURNING id_incidencia`,
-      [id_articulo, creado_por, prioridad, descripcion_pedido]
+      `INSERT INTO incidencias (id_articulo, id_estado, creado_por, prioridad, descripcion_pedido, imagen)
+       VALUES ($1, 1, $2, $3, $4, $5) RETURNING id_incidencia`,
+      [id_articulo, creado_por, prioridad, descripcion_pedido, imagen ?? null]
     );
     await client.query(
       `INSERT INTO incidencias_estados (id_incidencia, id_estado) VALUES ($1, 1)`,

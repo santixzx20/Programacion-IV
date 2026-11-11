@@ -125,6 +125,7 @@ export const schemas = {
       prioridad_texto: { type: 'string', example: 'Alta' },
       descripcion_pedido: { type: 'string', example: 'No enciende al presionar el botón.' },
       descripcion_resolucion: { type: 'string', nullable: true, example: null },
+      imagen: { type: 'string', nullable: true, example: '/uploads/incidencias/incidencia-3-1699999999999.jpg' },
     },
   },
   IncidenciaEntrada: {
@@ -214,32 +215,6 @@ export const paths = {
       summary: 'Devuelve los datos del usuario autenticado',
       responses: {
         200: okObjeto('Usuario actual', 'UsuarioPublico'),
-        401: error('Token no proporcionado, inválido o vencido'),
-        500: respuesta('ErrorInterno'),
-      },
-    },
-  },
-
-  '/api/v1/auth/avatar': {
-    post: {
-      tags: ['Autenticación'],
-      summary: 'Sube y actualiza el avatar del usuario autenticado',
-      requestBody: {
-        required: true,
-        content: {
-          'multipart/form-data': {
-            schema: {
-              type: 'object',
-              properties: {
-                avatar: { type: 'string', format: 'binary', description: 'JPG, PNG o WEBP de hasta 2 MB' },
-              },
-            },
-          },
-        },
-      },
-      responses: {
-        200: okObjeto('Avatar actualizado', 'UsuarioPublico'),
-        400: error('Archivo faltante, formato no permitido o mayor a 2 MB'),
         401: error('Token no proporcionado, inválido o vencido'),
         500: respuesta('ErrorInterno'),
       },
@@ -373,8 +348,27 @@ export const paths = {
     },
     post: {
       tags: ['Incidencias'],
-      summary: 'Registra una incidencia (rol Municipal)',
-      requestBody: cuerpo('IncidenciaEntrada'),
+      summary: 'Registra una incidencia con imagen opcional (rol Municipal)',
+      description:
+        'Acepta JSON o multipart/form-data. Con multipart se puede adjuntar una imagen JPG, PNG o WEBP de hasta 2 MB en el campo "imagen".',
+      requestBody: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: ['id_articulo', 'descripcion_pedido'],
+              properties: {
+                id_articulo: { type: 'integer', example: 1 },
+                prioridad: { type: 'integer', enum: [1, 2, 3], default: 2, example: 3 },
+                descripcion_pedido: { type: 'string', maxLength: 1000, example: 'No enciende al presionar el botón.' },
+                imagen: { type: 'string', format: 'binary', description: 'Imagen opcional (JPG, PNG o WEBP, máximo 2 MB)' },
+              },
+            },
+          },
+          'application/json': { schema: ref('IncidenciaEntrada') },
+        },
+      },
       responses: {
         201: okObjeto('Incidencia creada', 'Incidencia'),
         400: respuesta('ErrorValidacion'),

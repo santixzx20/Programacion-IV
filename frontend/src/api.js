@@ -3,7 +3,11 @@
 // ==========================================================
 import { tokenActual, limpiarSesion } from './auth.js';
 
-const URL_API = 'http://localhost:3000/api/v1';
+const URL_BACKEND = 'http://localhost:3000';
+const URL_API = `${URL_BACKEND}/api/v1`;
+
+// Convierte la ruta relativa que devuelve la API en una URL accesible
+export const urlArchivo = (ruta) => (ruta ? `${URL_BACKEND}${ruta}` : null);
 
 // Envía el pedido y devuelve el JSON de la respuesta.
 // Si el backend responde con error, lanza un Error con su mensaje.
@@ -68,7 +72,18 @@ export const eliminarArticulo = (id) => pedir(`/articulos/${id}`, { method: 'DEL
 // ---------------- Incidencias ----------------
 export const listarIncidencias = (filtros) => pedir(`/incidencias${query(filtros)}`);
 export const obtenerIncidencia = (id) => pedir(`/incidencias/${id}`);
-export const crearIncidencia = (datos) => pedir('/incidencias', conBody('POST', datos));
+export const crearIncidencia = (datos) => {
+  // Si viene una imagen, se envía como multipart/form-data (multer)
+  if (datos.imagen instanceof File) {
+    const formulario = new FormData();
+    formulario.append('id_articulo', datos.id_articulo);
+    formulario.append('prioridad', datos.prioridad);
+    formulario.append('descripcion_pedido', datos.descripcion_pedido);
+    formulario.append('imagen', datos.imagen);
+    return pedir('/incidencias', { method: 'POST', body: formulario });
+  }
+  return pedir('/incidencias', conBody('POST', datos));
+};
 export const cancelarIncidencia = (id) => pedir(`/incidencias/${id}/cancelar`, { method: 'PATCH' });
 export const asignarIncidencia = (id, asignado_a) =>
   pedir(`/incidencias/${id}/asignar`, conBody('PATCH', { asignado_a }));

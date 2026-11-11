@@ -37,17 +37,3 @@ export const login = async (req, res) => {
 export const me = async (req, res) => {
   res.json(datosPublicos(req.usuario));
 };
-
-export const actualizarAvatar = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ mensaje: 'Tenés que seleccionar un archivo de imagen' });
-  }
-
-  const rutaAvatar = `/uploads/avatars/${req.file.filename}`;
-  await Auth.actualizarAvatar(req.usuario.id_usuario, rutaAvatar);
-
-  res.json({
-    mensaje: 'Avatar actualizado correctamente',
-    avatar: rutaAvatar,
-  });
-};

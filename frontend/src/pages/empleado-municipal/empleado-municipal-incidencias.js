@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import * as bootstrap from 'bootstrap';
 import {
-  listarIncidencias, crearIncidencia, cancelarIncidencia, listarArticulos,
+  listarIncidencias, crearIncidencia, cancelarIncidencia, listarArticulos, urlArchivo,
 } from '../../api.js';
 import { badgeEstado, alerta, filaMensaje } from '../../ui.js';
 import { requerirSesion } from '../../auth.js';
@@ -40,6 +40,16 @@ function renderizarTabla() {
 
     const tdDescripcion = document.createElement('td');
     tdDescripcion.textContent = inc.descripcion_pedido;
+
+    if (inc.imagen) {
+      const enlaceImagen = document.createElement('a');
+      enlaceImagen.href = urlArchivo(inc.imagen);
+      enlaceImagen.target = '_blank';
+      enlaceImagen.rel = 'noopener';
+      enlaceImagen.className = 'd-block small';
+      enlaceImagen.textContent = 'Ver imagen';
+      tdDescripcion.appendChild(enlaceImagen);
+    }
 
     const tdPrioridad = document.createElement('td');
     const badgePrioridad = document.createElement('span');
@@ -122,6 +132,7 @@ document.getElementById('form-nueva-incidencia').addEventListener('submit', asyn
       id_articulo: Number(document.getElementById('select-articulo').value),
       prioridad: Number(document.getElementById('select-prioridad').value),
       descripcion_pedido: document.getElementById('input-descripcion').value.trim(),
+      imagen: document.getElementById('input-imagen').files[0] || null,
       creado_por: ID_USUARIO,
     });
     modal.hide();

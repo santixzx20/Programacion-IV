@@ -8,7 +8,7 @@ Sistema web para registrar, asignar y resolver incidencias informáticas del mun
 
 - **Frontend:** Vite + HTML + CSS + JavaScript + Bootstrap 5.
 - **Backend:** Node.js + Express 5 (ESM) + PostgreSQL (`pg`).
-- **Middlewares:** `express-validator` (validaciones), `morgan` (registro de solicitudes) y `multer` (carga de avatar).
+- **Middlewares:** `express-validator` (validaciones), `morgan` (registro de solicitudes) y `multer` (imagen de la incidencia).
 - **Seguridad:** JWT (`jsonwebtoken`), contraseñas con `bcryptjs`, variables de entorno con `dotenv`.
 - **Reportes:** PDF con `pdfkit`. **Correo:** `nodemailer`.
 - **Base de datos:** PostgreSQL 18.
@@ -90,7 +90,6 @@ Cada request envía `Authorization: Bearer <token>` y las pantallas verifican el
 |---|---|---|
 | POST | `/api/v1/auth/login` | Inicia sesión y devuelve el token JWT |
 | GET | `/api/v1/auth/me` | Datos del usuario autenticado |
-| POST | `/api/v1/auth/avatar` | Sube y actualiza el avatar del usuario (`multer`) |
 | GET | `/api/v1/categorias` | Lista categorías activas (rol Sistemas) |
 | GET | `/api/v1/categorias/:id` | Obtiene una categoría |
 | POST | `/api/v1/categorias` | Crea una categoría |
@@ -103,7 +102,7 @@ Cada request envía `Authorization: Bearer <token>` y las pantallas verifican el
 | DELETE | `/api/v1/articulos/:id` | Baja lógica (rol Sistemas) |
 | GET | `/api/v1/incidencias` | Lista según el rol (filtros `id_estado`, `prioridad`, `id_area`, `desde`, `hasta`) |
 | GET | `/api/v1/incidencias/:id` | Detalle de la incidencia |
-| POST | `/api/v1/incidencias` | Crea una incidencia (rol Municipal) |
+| POST | `/api/v1/incidencias` | Crea una incidencia con imagen opcional (`multer`) |
 | PATCH | `/api/v1/incidencias/:id/cancelar` | Cancela (dueño o Director) |
 | PATCH | `/api/v1/incidencias/:id/asignar` | Asigna a un empleado de Sistemas (Director) |
 | PATCH | `/api/v1/incidencias/:id/finalizar` | Finaliza con resolución (Sistemas asignado) |

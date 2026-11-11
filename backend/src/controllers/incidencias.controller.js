@@ -74,6 +74,7 @@ export const crear = async (req, res) => {
     creado_por: req.usuario.id_usuario,
     prioridad: Number(prioridad),
     descripcion_pedido: descripcion_pedido.trim(),
+    imagen: req.file ? `/uploads/incidencias/${req.file.filename}` : null,
   });
   res.status(201).json(incidencia);
 };
