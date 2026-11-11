@@ -12,6 +12,7 @@ dist/
 build/
 uploads/
 *.log
+*.zip
 
 # Respaldos de base de datos
 database/backups/
